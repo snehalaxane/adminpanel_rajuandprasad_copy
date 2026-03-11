@@ -5,7 +5,7 @@ import { Plus, Trash2, GripVertical, Save, Eye, Loader2, ArrowUp, ArrowDown } fr
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function NavbarFooterManager() {
-  const [activeTab, setActiveTab] = useState<'navbar' | 'quicklinks' | 'footer' | 'footerSections'>('navbar');
+  const [activeTab, setActiveTab] = useState<'navbar' | 'quicklinks' | 'footer' | 'footerSections' | 'newsTicker'>('navbar');
 
   // Navbar state
   const [navItems, setNavItems] = useState<any[]>([]);
@@ -30,6 +30,10 @@ export default function NavbarFooterManager() {
   const [footerSections, setFooterSections] = useState<any[]>([]);
   const [footerSectionsLoading, setFooterSectionsLoading] = useState(false);
 
+  // News Ticker state
+  const [newsTickerItems, setNewsTickerItems] = useState<any[]>([]);
+  const [newsTickerLoading, setNewsTickerLoading] = useState(false);
+
   // Toast notification
   const [toast, setToast] = useState('');
 
@@ -51,6 +55,11 @@ export default function NavbarFooterManager() {
   // Fetch footer sections on mount
   useEffect(() => {
     fetchFooterSections();
+  }, []);
+
+  // Fetch news ticker items on mount
+  useEffect(() => {
+    fetchNewsTickerItems();
   }, []);
 
   // ========== NAVBAR FUNCTIONS ==========
@@ -323,6 +332,68 @@ export default function NavbarFooterManager() {
     setFooterSections(updatedSections);
   };
 
+  // ========== NEWS TICKER FUNCTIONS ==========
+  const fetchNewsTickerItems = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/api/news-ticker`);
+      setNewsTickerItems(res.data);
+    } catch (error) {
+      console.error('Error fetching news ticker items:', error);
+      showToast('Error loading news ticker items');
+    }
+  };
+
+  const handleNewsTickerChange = (index: number, field: string, value: any) => {
+    const updated = [...newsTickerItems];
+    updated[index] = { ...updated[index], [field]: value };
+    setNewsTickerItems(updated);
+  };
+
+  const handleAddNewsTickerItem = () => {
+    const newItem = {
+      content: 'New updates and expert services...',
+      enabled: true,
+      order: newsTickerItems.length
+    };
+    setNewsTickerItems([...newsTickerItems, newItem]);
+  };
+
+  const handleDeleteNewsTickerItem = async (index: number) => {
+    const item = newsTickerItems[index];
+    if (item._id) {
+      try {
+        await axios.delete(`${API_BASE_URL}/api/news-ticker/${item._id}`);
+        showToast('News item deleted');
+      } catch (error) {
+        console.error('Error deleting news item:', error);
+        showToast('Error deleting news item');
+        return;
+      }
+    }
+    const updated = newsTickerItems.filter((_, i) => i !== index);
+    setNewsTickerItems(updated);
+  };
+
+  const handleSaveNewsTicker = async () => {
+    setNewsTickerLoading(true);
+    try {
+      await Promise.all(
+        newsTickerItems.map(item =>
+          item._id
+            ? axios.put(`${API_BASE_URL}/api/news-ticker/${item._id}`, item)
+            : axios.post(`${API_BASE_URL}/api/news-ticker`, item)
+        )
+      );
+      showToast('News Ticker saved successfully!');
+      fetchNewsTickerItems();
+    } catch (error) {
+      console.error('Error saving news ticker:', error);
+      showToast('Error saving news ticker');
+    } finally {
+      setNewsTickerLoading(false);
+    }
+  };
+
   // ========== UTILITY FUNCTIONS ==========
   const showToast = (message: string) => {
     setToast(message);
@@ -385,6 +456,18 @@ export default function NavbarFooterManager() {
             <div className="absolute inset-0 bg-gradient-to-r from-[rgba(136,136,136,0.2)] to-transparent opacity-50 rounded-t-lg"></div>
           )}
           <span className="relative z-10">Footer Sections</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('newsTicker')}
+          className={`px-6 py-3 font-medium transition-all duration-300 relative ${activeTab === 'newsTicker'
+            ? 'text-white bg-gradient-to-r from-[#022683] via-[#022683] to-[#033aa0] rounded-t-lg shadow-lg animate-tab-active'
+            : 'text-[#888888] hover:text-[#E6E6E6] hover:bg-[rgba(136,136,136,0.1)] rounded-t-lg'
+            }`}
+        >
+          {activeTab === 'newsTicker' && (
+            <div className="absolute inset-0 bg-gradient-to-r from-[rgba(136,136,136,0.2)] to-transparent opacity-50 rounded-t-lg"></div>
+          )}
+          <span className="relative z-10">News Ticker</span>
         </button>
       </div>
 
@@ -872,6 +955,122 @@ export default function NavbarFooterManager() {
                 <a href={footerData.socialMedia.facebook} className="text-white hover:underline text-sm">Facebook</a>
               </div>
               <p className="text-xs text-white/80">{footerData.copyright}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* News Ticker Tab */}
+      {activeTab === 'newsTicker' && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in">
+          <div className="lg:col-span-2 bg-gradient-to-br from-[#16181D] to-[#1a1d24] rounded-lg shadow-lg p-6 border border-[rgba(136,136,136,0.25)] hover-card-lift">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <span className="w-1 h-6 bg-gradient-to-b from-[#888888] to-[#022683] rounded-full animate-pulse-slow"></span>
+                News Ticker Management
+              </h2>
+              <button
+                onClick={handleAddNewsTickerItem}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#022683] to-[#033aa0] text-white rounded-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95"
+              >
+                <Plus className="w-4 h-4" />
+                Add News Item
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {newsTickerItems.map((item, index) => (
+                <div key={item._id || index} className="p-4 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg hover:border-[#888888] transition-all duration-300">
+                  <div className="flex gap-4">
+                    <div className="flex-1 space-y-3">
+                      <textarea
+                        value={item.content}
+                        onChange={(e) => handleNewsTickerChange(index, 'content', e.target.value)}
+                        placeholder="Enter news content..."
+                        rows={2}
+                        className="w-full px-3 py-2 bg-[#16181D] border border-[rgba(136,136,136,0.25)] rounded-lg outline-none text-[#E6E6E6] focus:ring-1 focus:ring-[#022683]"
+                      />
+                      <div className="flex items-center gap-4">
+                        <input
+                          type="number"
+                          value={item.order}
+                          onChange={(e) => handleNewsTickerChange(index, 'order', parseInt(e.target.value))}
+                          placeholder="Order"
+                          className="w-20 px-3 py-1 bg-[#16181D] border border-[rgba(136,136,136,0.25)] rounded text-xs text-white"
+                        />
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={item.enabled}
+                            onChange={(e) => handleNewsTickerChange(index, 'enabled', e.target.checked)}
+                            className="sr-only"
+                          />
+                          <div className={`w-8 h-4 rounded-full transition-all ${item.enabled ? 'bg-green-500' : 'bg-gray-600'}`}>
+                            <div className={`w-3 h-3 bg-white rounded-full m-0.5 transition-all ${item.enabled ? 'translate-x-4' : ''}`} />
+                          </div>
+                          <span className="text-xs text-[#888888]">Enabled</span>
+                        </label>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleDeleteNewsTickerItem(index)}
+                      className="p-2 text-red-400 hover:bg-red-400/10 rounded-lg self-start transition-all"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={handleSaveNewsTicker}
+                disabled={newsTickerLoading}
+                className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-[#022683] to-[#033aa0] text-white rounded-lg hover:shadow-xl transition-all disabled:opacity-50"
+              >
+                {newsTickerLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                Save News Ticker
+              </button>
+            </div>
+          </div>
+
+          <div className="lg:col-span-1">
+            <style>
+              {`
+                @keyframes adminMarquee {
+                  0% { transform: translateX(100%); }
+                  100% { transform: translateX(-100%); }
+                }
+                .preview-marquee {
+                  display: inline-block;
+                  white-space: nowrap;
+                  animation: adminMarquee 15s linear infinite;
+                }
+              `}
+            </style>
+            <div className="bg-gradient-to-br from-[#16181D] to-[#1a1d24] rounded-lg shadow-lg p-6 border border-[rgba(136,136,136,0.25)] sticky top-8">
+              <h3 className="font-bold text-white mb-4 flex items-center gap-2">
+                <Eye className="w-5 h-5 text-[#888888]" />
+                Animation Preview
+              </h3>
+              <div className="bg-white rounded h-12 overflow-hidden flex items-center border border-blue-900 shadow-inner relative">
+                <div className="absolute left-0 top-0 bottom-0 bg-blue-900 text-white px-2 flex items-center text-[10px] font-bold z-10">NEWS</div>
+                <div
+                  className="preview-marquee text-blue-900 text-sm font-semibold uppercase pl-16"
+                  style={{
+                    animationDuration: `${Math.max((newsTickerItems.filter(i => i.enabled).map(i => i.content).join('').length / 5), 10)}s`
+                  }}
+                >
+                  {newsTickerItems
+                    .filter(i => i.enabled)
+                    .map(i => i.content)
+                    .join(' \u00A0\u00A0\u00A0 • \u00A0\u00A0\u00A0 ')}
+                </div>
+              </div>
+              <p className="text-[10px] text-[#888888] mt-4">
+                * Note: The preview shows a live simulation of the frontend scroll speed.
+              </p>
             </div>
           </div>
         </div>
