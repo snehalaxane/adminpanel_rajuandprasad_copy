@@ -1,0 +1,143 @@
+/* SMOKY GLASS FORM - with Original Blue Branding */
+
+.login-page-container {
+    background: #8e9092 !important;
+    /* The solid gray background for contrast */
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-card {
+    /* Smoky Glass Card Background */
+    background: rgba(255, 255, 255, 0.12) !important;
+    backdrop-filter: blur(25px) saturate(160%);
+    -webkit-backdrop-filter: blur(25px) saturate(160%);
+
+    /* Elegant soft borders */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    border-left: 1px solid rgba(255, 255, 255, 0.25);
+
+    /* Smooth rounded corners from reference */
+    border-radius: 40px !important;
+
+    /* Shadow for depth */
+    box-shadow:
+        0 30px 60px -12px rgba(0, 0, 0, 0.35),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+
+    padding: 2.5rem !important;
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
+}
+
+/* 🔵 ORIGINAL BLUE BRANDING - LOGO CIRCLE */
+.icon-circle {
+    background: linear-gradient(135deg, #022683, #0445c5) !important;
+    box-shadow: 0 10px 25px rgba(2, 38, 131, 0.5) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 🔵 ORIGINAL BLUE BRANDING - LOGIN BUTTON */
+.login-button {
+    background: linear-gradient(90deg, #022683, #0445c5, #022683) !important;
+    background-size: 200% auto !important;
+    border: none !important;
+    border-radius: 12px !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px !important;
+    padding: 14px !important;
+    box-shadow: 0 8px 20px rgba(2, 38, 131, 0.4) !important;
+    transition: all 0.4s ease !important;
+}
+
+.login-button:hover {
+    background-position: right center !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 12px 25px rgba(2, 38, 131, 0.6) !important;
+}
+
+/* Glassy Inputs */
+.login-input {
+    background: rgba(0, 0, 0, 0.2) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 12px !important;
+    color: #ffffff !important;
+    padding: 12px 16px 12px 44px !important;
+    transition: all 0.3s ease;
+}
+
+.login-input:focus {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border-color: #022683 !important;
+    box-shadow: 0 0 15px rgba(2, 38, 131, 0.3) !important;
+}
+
+.login-input::placeholder {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* 🛡️ Change Icon Color to Black when Autofilled (except Lock icon) */
+.relative:has(input:-webkit-autofill) svg:not(.lucide-lock) {
+    color: #000000 !important;
+    z-index: 20 !important;
+}
+
+/* Ensure Lock icon and top circle icon stay white */
+.lucide-lock,
+.icon-circle svg {
+    color: #ffffff !important;
+}
+
+/* Ensure icons are always above inputs */
+.relative svg {
+    z-index: 10;
+    pointer-events: none;
+}
+
+/* 🛡️ FIX: Prevent Browser Autofill from changing colors & PADDING */
+.login-input:-webkit-autofill,
+.login-input:-webkit-autofill:hover,
+.login-input:-webkit-autofill:focus,
+.login-input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.25) inset !important;
+    -webkit-text-fill-color: #ffffff !important;
+    transition: background-color 5000s ease-in-out 0s;
+    /* Force the padding to stay so text doesn't hit the left edge/icon */
+    padding-left: 44px !important;
+}
+
+/* Restore Shine Layer Animation */
+.shine-layer {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transform: skewX(-20deg);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.login-button:hover .shine-layer {
+    left: 150%;
+    transition: all 0.7s ease;
+}
+
+/* Restore Forgot Password Link Styles */
+.forgot-password-link {
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+}
+
+.forgot-password-link:hover {
+    color: #022683 !important;
+    text-shadow: 0 0 10px rgba(96, 165, 250, 0.3);
+}
