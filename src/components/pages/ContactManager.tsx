@@ -1387,14 +1387,89 @@ export default function ContactManager() {
             </div>
           </div>
 
-          <div className="bg-[#16181D] rounded-lg shadow-lg p-6 border border-[rgba(136,136,136,0.25)] flex flex-col items-center justify-center text-center space-y-4">
-            <div className="w-16 h-16 bg-[#022683]/20 rounded-full flex items-center justify-center">
-              <Building2 className="w-8 h-8 text-[#022683]" />
+          <div className="lg:col-span-1">
+            <div className="bg-gradient-to-br from-[#16181D] to-[#1a1d24] rounded-lg shadow-lg p-6 sticky top-8 border border-[rgba(136,136,136,0.25)] hover-card-lift max-h-[85vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+              <h3 className="font-bold text-[#E6E6E6] mb-4 flex items-center gap-2 sticky top-0 bg-[#16181D] py-2 z-10 border-b border-[rgba(136,136,136,0.1)]">
+                <Eye className="w-5 h-5 text-[#888888]" />
+                Section Preview
+              </h3>
+
+              {infraData.enabled ? (
+                <div className="w-full flex flex-col gap-4 animate-fade-in text-left">
+                  {/* Header Preview */}
+                  <div className="bg-black rounded-lg p-4 text-center border border-gray-800">
+                    <h2 className="text-xl font-extrabold text-white mb-2">{infraData.title || 'Title'}</h2>
+                    <div className="w-8 h-0.5 mx-auto mb-3 bg-[#022683]"></div>
+                    <p className="text-xs text-white/90 line-clamp-3">{infraData.description || 'Description goes here...'}</p>
+                  </div>
+
+                  {/* Contact & Newsletter Box Preview */}
+                  <div className="flex flex-col rounded-[20px] overflow-hidden border border-white/10 shadow-lg">
+                    {/* Contact Side */}
+                    <div className="bg-[#022683] p-5 text-white">
+                      <div className="flex gap-1 mb-3">
+                        <div className="w-2 h-0.5 bg-[#F5C542]"></div>
+                        <div className="w-2 h-0.5 bg-[#F5C542]"></div>
+                        <div className="w-2 h-0.5 bg-[#F5C542]"></div>
+                      </div>
+                      <h3 className="text-lg font-bold mb-1">{infraData.contactTitle || 'Contact Us'}</h3>
+                      <h4 className="text-xs font-semibold text-white/80 mb-4">{infraData.officeName || 'Head Office'}</h4>
+                      
+                      <div className="space-y-3 text-xs">
+                        {infraData.address && (
+                          <div className="flex gap-2 items-start">
+                            <MapPin className="w-3.5 h-3.5 text-[#F5C542] shrink-0 mt-0.5" /> 
+                            <span className="line-clamp-2 leading-tight">{infraData.address}</span>
+                          </div>
+                        )}
+                        {(infraData.phone1 || infraData.phone2) && (
+                          <div className="flex gap-2 items-start">
+                            <Phone className="w-3.5 h-3.5 text-[#F5C542] shrink-0 mt-0.5" /> 
+                            <div className="flex flex-col">
+                              <span>{infraData.phone1}</span>
+                              <span>{infraData.phone2}</span>
+                            </div>
+                          </div>
+                        )}
+                        {infraData.email && (
+                          <div className="flex gap-2 items-start">
+                            <Mail className="w-3.5 h-3.5 text-[#F5C542] shrink-0 mt-0.5" /> 
+                            <span className="break-all">{infraData.email}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* Newsletter Side */}
+                    <div className="bg-gray-100 p-5">
+                      <div className="flex gap-1 mb-3">
+                        <div className="w-2 h-0.5 bg-[#F5C542]"></div>
+                        <div className="w-2 h-0.5 bg-[#F5C542]"></div>
+                        <div className="w-2 h-0.5 bg-[#F5C542]"></div>
+                      </div>
+                      <h3 className="text-lg font-bold text-[#022683] mb-1">{infraData.newsletterTitle || 'Newsletter'}</h3>
+                      <p className="text-xs text-gray-700 mb-4">{infraData.newsletterSubtitle || 'Subscribe to our Newsletter'}</p>
+                      
+                      <div className="space-y-2.5">
+                        <div className="h-8 bg-white/70 rounded-lg border border-gray-300"></div>
+                        <div className="h-8 bg-white/70 rounded-lg border border-gray-300"></div>
+                        <div className="h-16 bg-white/70 rounded-lg border border-gray-300"></div>
+                        <div className="h-10 bg-white border border-[#022683] rounded-full mt-2 w-full flex items-center justify-center text-xs text-[#022683] font-bold tracking-wider shadow-sm">
+                          SUBSCRIBE NOW
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-12 text-center space-y-3">
+                  <div className="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center">
+                    <Eye className="w-6 h-6 text-gray-500" />
+                  </div>
+                  <p className="text-sm text-[#888888]">Infrastructure section is currently disabled</p>
+                </div>
+              )}
             </div>
-            <h3 className="text-xl font-bold text-white">Preview Information</h3>
-            <p className="text-[#888888] max-w-xs">
-              These details will appear in the Infrastructure section of the homepage, showing your office capabilities and facilitating newsletter subscriptions.
-            </p>
           </div>
         </div>
       )}

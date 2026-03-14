@@ -10,6 +10,7 @@ interface SettingsType {
   tagline: string;
   primaryColor: string;
   secondaryColor: string;
+  backgroundColor: string;
   emailHost: string;
   emailPort: string;
   emailUser: string;
@@ -27,8 +28,9 @@ export default function Settings() {
     websiteStatus: 'Live',
     siteName: 'Raju & Prasad – Chartered Accountants',
     tagline: 'Excellence in Financial Services',
-    primaryColor: '#022683',
+    primaryColor: '#002855',
     secondaryColor: '#888888',
+    backgroundColor: '#D1D5DB',
     emailHost: 'smtp.gmail.com',
     emailPort: '587',
     emailUser: 'notifications@rajuprasad.com',
@@ -85,8 +87,8 @@ export default function Settings() {
 
   const handleSaveTheme = async () => {
     try {
-      const { primaryColor, secondaryColor } = settings;
-      await axios.put(`${API_BASE_URL}/api/settings/theme`, { primaryColor, secondaryColor });
+      const { primaryColor, secondaryColor, backgroundColor } = settings;
+      await axios.put(`${API_BASE_URL}/api/settings/theme`, { primaryColor, secondaryColor, backgroundColor });
       setToast('Theme colors saved!');
     } catch (err) {
       setToast('Error saving theme colors');
@@ -359,6 +361,26 @@ export default function Settings() {
                 </div>
               </div>
 
+              <div>
+                <label className="block text-sm font-medium text-[#888888] mb-2">
+                  Background Color (All Pages)
+                </label>
+                <div className="flex gap-3">
+                  <input
+                    type="color"
+                    value={settings.backgroundColor}
+                    onChange={(e) => setSettings({ ...settings, backgroundColor: e.target.value })}
+                    className="w-20 h-12 border border-[rgba(136,136,136,0.25)] rounded cursor-pointer transition-transform hover:scale-105 bg-[#0F1115]"
+                  />
+                  <input
+                    type="text"
+                    value={settings.backgroundColor}
+                    onChange={(e) => setSettings({ ...settings, backgroundColor: e.target.value })}
+                    className="flex-1 px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg focus:ring-2 focus:ring-[#002855] focus:border-transparent outline-none transition-all uppercase text-[#E6E6E6]"
+                  />
+                </div>
+              </div>
+
               <div className="p-4 bg-[rgba(136,136,136,0.05)] rounded-lg border border-[rgba(136,136,136,0.25)] shadow-inner">
                 <p className="text-sm text-[#888888] mb-3 font-medium">Color Preview:</p>
                 <div className="flex gap-3">
@@ -373,6 +395,12 @@ export default function Settings() {
                     style={{ backgroundColor: settings.secondaryColor }}
                   >
                     Secondary
+                  </div>
+                  <div
+                    className="flex-1 h-16 rounded-lg flex items-center justify-center text-gray-800 font-bold shadow-sm transition-all border border-gray-300"
+                    style={{ backgroundColor: settings.backgroundColor }}
+                  >
+                    Page BG
                   </div>
                 </div>
               </div>

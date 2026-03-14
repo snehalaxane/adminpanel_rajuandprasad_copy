@@ -16,6 +16,7 @@ interface Alumni {
   company: string;
   designation: string;
   industry: string;
+  image?: string;
   enabled: boolean;
   order: number;
 }
@@ -43,6 +44,7 @@ export default function AlumniManager() {
     company: '',
     designation: '',
     industry: '',
+    image: '',
     enabled: true
   });
 
@@ -107,6 +109,7 @@ export default function AlumniManager() {
       company: '',
       designation: '',
       industry: '',
+      image: '',
       enabled: true
     });
     setShowModal(true);
@@ -120,6 +123,7 @@ export default function AlumniManager() {
       company: alum.company,
       designation: alum.designation,
       industry: alum.industry || '',
+      image: alum.image || '',
       enabled: alum.enabled
     });
     setShowModal(true);
@@ -137,6 +141,7 @@ export default function AlumniManager() {
       company: formData.company,
       designation: formData.designation,
       industry: formData.industry,
+      image: formData.image,
       enabled: formData.enabled,
     };
 
@@ -365,7 +370,20 @@ export default function AlumniManager() {
             {/* Photo and Basic Info */}
             <div className="p-6">
               <div className="flex items-start gap-4 mb-4">
-
+                {/* Alumni Photo */}
+                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#022683] bg-[#0F1115] flex-shrink-0">
+                  {alum.image ? (
+                    <img
+                      src={resolveImageUrl(alum.image)}
+                      alt={alum.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-[#888888]">
+                      <User className="w-8 h-8" />
+                    </div>
+                  )}
+                </div>
 
                 <div className="flex-1 min-w-0">
                   <h3 className="text-lg font-bold text-white mb-1 truncate">{alum.name}</h3>
@@ -377,7 +395,6 @@ export default function AlumniManager() {
                     <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
                     <span className="truncate">{alum.industry}</span>
                   </div>
-
                 </div>
               </div>
 
@@ -453,6 +470,58 @@ export default function AlumniManager() {
                 </div>
 
 
+                <div className="animate-fade-in" style={{ animationDelay: '0.15s' }}>
+                  <label className="block text-sm font-medium text-[#888888] mb-2">
+                    Profile Image
+                  </label>
+                  <div className="flex gap-4 items-center">
+                    <div className="w-16 h-16 rounded-full overflow-hidden border border-[rgba(136,136,136,0.25)] bg-[#0F1115] flex-shrink-0">
+                      {formData.image ? (
+                        <img src={resolveImageUrl(formData.image)} alt="Preview" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-[#888888]">
+                          <User className="w-8 h-8" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 space-y-2">
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={formData.image?.startsWith('data:') ? 'Local Image Selected' : formData.image}
+                          onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                          readOnly={formData.image?.startsWith('data:')}
+                          className="flex-1 px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg text-white outline-none focus:ring-2 focus:ring-[#022683] text-sm"
+                          placeholder="Image URL or upload..."
+                        />
+                        <input
+                          type="file"
+                          id="alumni-photo-upload"
+                          className="hidden"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                setFormData({ ...formData, image: reader.result as string });
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => document.getElementById('alumni-photo-upload')?.click()}
+                          className="px-4 py-2 bg-[rgba(136,136,136,0.1)] text-white rounded-lg hover:bg-[rgba(136,136,136,0.2)] transition-colors flex items-center gap-2 text-sm"
+                        >
+                          <Upload className="w-4 h-4" />
+                          Upload
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Company and Designation */}

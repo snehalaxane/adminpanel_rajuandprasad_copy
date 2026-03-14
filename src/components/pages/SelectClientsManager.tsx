@@ -122,7 +122,7 @@ export default function SelectClientsManager() {
     const newSector = {
       name: 'New Sector',
       icon: 'Factory',
-      color: 'from-blue-500 to-indigo-600',
+      color: '#022683',
       enabled: true,
       industries: [],
       order: sectors.length
@@ -445,13 +445,22 @@ export default function SelectClientsManager() {
                           />
                         </div>
                         <div className="col-span-1">
-                          <label className="block text-xs font-medium text-[#888888] mb-1">Color Gradient</label>
-                          <input
-                            type="text"
-                            value={sector.color}
-                            onChange={(e) => handleUpdateSector(sector._id, { color: e.target.value })}
-                            className="w-full px-3 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded text-sm text-white"
-                          />
+                          <label className="block text-xs font-medium text-[#888888] mb-1">Color Code (Hex)</label>
+                          <div className="flex gap-2">
+                            <input
+                              type="color"
+                              value={sector.color || '#022683'}
+                              onChange={(e) => handleUpdateSector(sector._id, { color: e.target.value })}
+                              className="w-10 h-9 p-1 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded cursor-pointer"
+                            />
+                            <input
+                              type="text"
+                              value={sector.color}
+                              onChange={(e) => handleUpdateSector(sector._id, { color: e.target.value })}
+                              className="flex-1 px-3 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded text-sm text-white font-mono"
+                              placeholder="#000000"
+                            />
+                          </div>
                         </div>
                       </div>
 
@@ -501,7 +510,10 @@ export default function SelectClientsManager() {
                 const Icon = iconMap[sector.icon] || Factory;
                 return (
                   <div key={sector._id} className="border border-[rgba(136,136,136,0.15)] rounded-xl overflow-hidden group">
-                    <div className={`w-full p-4 flex items-center justify-between bg-gradient-to-r ${sector.color || 'from-[#022683] to-[#033aa0]'} text-white`}>
+                    <div
+                      className="w-full p-4 flex items-center justify-between text-white"
+                      style={{ backgroundColor: sector.color || '#022683' }}
+                    >
                       <div className="flex items-center gap-3">
                         <Icon className="w-4 h-4 opacity-70" />
                         <span className="font-bold text-sm tracking-tight">{sector.name}</span>

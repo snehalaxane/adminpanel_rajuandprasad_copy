@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { Plus, Edit, Trash2, GripVertical, Save, Eye, Upload, Loader2, X } from 'lucide-react';
+import { Plus, Edit, Trash2, GripVertical, Save, Eye, Upload, Loader2, X, ChevronUp, ChevronDown } from 'lucide-react';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -19,6 +19,8 @@ export default function TeamManager() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [orderChanged, setOrderChanged] = useState(false);
+  const [savingOrder, setSavingOrder] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -39,7 +41,8 @@ export default function TeamManager() {
   const [introData, setIntroData] = useState({
     title: 'The Team',
     description: 'Meet our experienced & dedicated Chartered Accountant professionals',
-    backgroundImage: ''
+    backgroundImage: '',
+    accentText: ''
   });
   const [savingIntro, setSavingIntro] = useState(false);
   const introFileInputRef = useRef<HTMLInputElement>(null);
@@ -56,7 +59,8 @@ export default function TeamManager() {
         setIntroData({
           title: res.data.title || 'The Team',
           description: res.data.description || 'Meet our experienced & dedicated Chartered Accountant professionals',
-          backgroundImage: res.data.backgroundImage || ''
+          backgroundImage: res.data.backgroundImage || '',
+          accentText: res.data.accentText || ''
         });
       }
     } catch (error) {
@@ -67,7 +71,13 @@ export default function TeamManager() {
   const handleSaveIntro = async () => {
     setSavingIntro(true);
     try {
-      await axios.put(`${API_BASE_URL}/api/team-intro`, introData);
+      const dataToSave = {
+        title: introData.title,
+        description: introData.description,
+        backgroundImage: introData.backgroundImage,
+        accentText: introData.accentText
+      };
+      await axios.put(`${API_BASE_URL}/api/team-intro`, dataToSave);
       showToast('Team header updated successfully!');
     } catch (error) {
       console.error('Error saving team intro:', error);
@@ -234,6 +244,34 @@ export default function TeamManager() {
     }
   };
 
+  const moveMember = (index: number, direction: 'up' | 'down') => {
+    const newMembers = [...teamMembers];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+
+    if (targetIndex < 0 || targetIndex >= newMembers.length) return;
+
+    // Swap
+    [newMembers[index], newMembers[targetIndex]] = [newMembers[targetIndex], newMembers[index]];
+
+    setTeamMembers(newMembers);
+    setOrderChanged(true);
+  };
+
+  const handleSaveOrder = async () => {
+    setSavingOrder(true);
+    try {
+      const orders = teamMembers.map((m, i) => ({ id: m._id, order: i }));
+      await axios.post(`${API_BASE_URL}/api/team-members/reorder`, { orders });
+      showToast('Order saved successfully!');
+      setOrderChanged(false);
+    } catch (error) {
+      console.error('Error saving order:', error);
+      showToast('Error saving order');
+    } finally {
+      setSavingOrder(false);
+    }
+  };
+
 
   const showToast = (message: string) => {
     setToast(message);
@@ -281,14 +319,26 @@ export default function TeamManager() {
           <h1 className="text-3xl font-bold text-white mb-2">Team Management</h1>
           <p className="text-[#888888]">Manage team members and their profiles</p>
         </div>
-        <button
-          onClick={openAddModal}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#022683] to-[#033aa0] text-white rounded-lg hover:from-[#033aa0] hover:to-[#022683] transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 relative overflow-hidden group"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-[rgba(136,136,136,0.2)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          <Plus className="w-4 h-4 relative z-10 transition-transform duration-300 group-hover:rotate-90" />
-          <span className="relative z-10">Add Team Member</span>
-        </button>
+        <div className="flex gap-4">
+          {orderChanged && (
+            <button
+              onClick={handleSaveOrder}
+              disabled={savingOrder}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-all duration-300 shadow-lg hover:scale-105 active:scale-95"
+            >
+              {savingOrder ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+              <span>Save Order</span>
+            </button>
+          )}
+          <button
+            onClick={openAddModal}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#022683] to-[#033aa0] text-white rounded-lg hover:from-[#033aa0] hover:to-[#022683] transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 relative overflow-hidden group"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-[rgba(136,136,136,0.2)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <Plus className="w-4 h-4 relative z-10 transition-transform duration-300 group-hover:rotate-90" />
+            <span className="relative z-10">Add Team Member</span>
+          </button>
+        </div>
       </div>
 
       {/* Team Intro Section */}
@@ -326,6 +376,15 @@ export default function TeamManager() {
               onChange={(e) => setIntroData({ ...introData, description: e.target.value })}
               className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg text-[#E6E6E6] focus:ring-2 focus:ring-[#022683] outline-none h-11 resize-none"
               placeholder="e.g., Meet our experienced & dedicated professionals"
+            />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-[#888888] mb-2">Accent Line Text (Intro Paragraph)</label>
+            <textarea
+              value={introData.accentText}
+              onChange={(e) => setIntroData({ ...introData, accentText: e.target.value })}
+              className="w-full px-4 py-3 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg text-[#E6E6E6] focus:ring-2 focus:ring-[#022683] outline-none h-32 resize-none leading-relaxed"
+              placeholder="The Firm has a blend of professionals..."
             />
           </div>
           <div className="md:col-span-2">
@@ -390,7 +449,25 @@ export default function TeamManager() {
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="flex items-start gap-4">
-                <GripVertical className="w-5 h-5 text-[#888888] cursor-move mt-2 hover:text-[#E6E6E6] transition-colors duration-300" />
+                <div className="flex flex-col gap-1 mt-2">
+                  <button
+                    onClick={() => moveMember(index, 'up')}
+                    disabled={index === 0}
+                    className="p-1 text-[#888888] hover:text-[#E6E6E6] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    title="Move Up"
+                  >
+                    <ChevronUp className="w-5 h-5" />
+                  </button>
+                  <GripVertical className="w-5 h-5 text-[#888888] mx-auto opacity-30" />
+                  <button
+                    onClick={() => moveMember(index, 'down')}
+                    disabled={index === teamMembers.length - 1}
+                    className="p-1 text-[#888888] hover:text-[#E6E6E6] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    title="Move Down"
+                  >
+                    <ChevronDown className="w-5 h-5" />
+                  </button>
+                </div>
 
                 <div className="w-20 h-20 bg-gradient-to-br from-[#0F1115] to-[#16181D] rounded-lg overflow-hidden flex-shrink-0 border border-[rgba(136,136,136,0.25)] hover:border-[#888888] transition-all duration-300">
                   {member.photo ? (
