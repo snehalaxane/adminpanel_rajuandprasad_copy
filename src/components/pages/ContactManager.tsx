@@ -39,16 +39,6 @@ export default function ContactManager() {
   const [infraData, setInfraData] = useState({
     title: 'Infrastructure',
     description: '',
-    contactTitle: 'Contact Us',
-    officeName: 'Head Office',
-    address: '',
-    phone1: '',
-    phone2: '',
-    email: '',
-    website: '',
-    fax: '',
-    newsletterTitle: 'Newsletter',
-    newsletterSubtitle: 'Subscribe to our Newsletter',
     enabled: true
   });
   const [submissions, setSubmissions] = useState<any[]>([]);
@@ -1273,107 +1263,7 @@ export default function ContactManager() {
                 />
               </div>
 
-              <h3 className="text-lg font-bold text-[#5b8fff] mt-8 mb-4">Contact Side Details</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-[#888888] mb-1">Contact Title</label>
-                  <input
-                    type="text"
-                    value={infraData.contactTitle}
-                    onChange={(e) => setInfraData({ ...infraData, contactTitle: e.target.value })}
-                    className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#888888] mb-1">Office Name</label>
-                  <input
-                    type="text"
-                    value={infraData.officeName}
-                    onChange={(e) => setInfraData({ ...infraData, officeName: e.target.value })}
-                    className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg text-white"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#888888] mb-1">Address</label>
-                <textarea
-                  value={infraData.address}
-                  onChange={(e) => setInfraData({ ...infraData, address: e.target.value })}
-                  rows={2}
-                  className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg text-white"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-[#888888] mb-1">Phone 1</label>
-                  <input
-                    type="text"
-                    value={infraData.phone1}
-                    onChange={(e) => setInfraData({ ...infraData, phone1: e.target.value })}
-                    className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#888888] mb-1">Phone 2</label>
-                  <input
-                    type="text"
-                    value={infraData.phone2}
-                    onChange={(e) => setInfraData({ ...infraData, phone2: e.target.value })}
-                    className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg text-white"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-[#888888] mb-1">Email</label>
-                  <input
-                    type="email"
-                    value={infraData.email}
-                    onChange={(e) => setInfraData({ ...infraData, email: e.target.value })}
-                    className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#888888] mb-1">Website</label>
-                  <input
-                    type="text"
-                    value={infraData.website}
-                    onChange={(e) => setInfraData({ ...infraData, website: e.target.value })}
-                    className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg text-white"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#888888] mb-1">Fax</label>
-                <input
-                  type="text"
-                  value={infraData.fax}
-                  onChange={(e) => setInfraData({ ...infraData, fax: e.target.value })}
-                  className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg text-white"
-                />
-              </div>
 
-              <h3 className="text-lg font-bold text-[#5b8fff] mt-8 mb-4">Newsletter Side Details</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-[#888888] mb-1">Newsletter Title</label>
-                  <input
-                    type="text"
-                    value={infraData.newsletterTitle}
-                    onChange={(e) => setInfraData({ ...infraData, newsletterTitle: e.target.value })}
-                    className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#888888] mb-1">Newsletter Subtitle</label>
-                  <input
-                    type="text"
-                    value={infraData.newsletterSubtitle}
-                    onChange={(e) => setInfraData({ ...infraData, newsletterSubtitle: e.target.value })}
-                    className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg text-white"
-                  />
-                </div>
-              </div>
 
               <div className="flex justify-end pt-6">
                 <button
@@ -1403,63 +1293,7 @@ export default function ContactManager() {
                     <p className="text-xs text-white/90 line-clamp-3">{infraData.description || 'Description goes here...'}</p>
                   </div>
 
-                  {/* Contact & Newsletter Box Preview */}
-                  <div className="flex flex-col rounded-[20px] overflow-hidden border border-white/10 shadow-lg">
-                    {/* Contact Side */}
-                    <div className="bg-[#022683] p-5 text-white">
-                      <div className="flex gap-1 mb-3">
-                        <div className="w-2 h-0.5 bg-[#F5C542]"></div>
-                        <div className="w-2 h-0.5 bg-[#F5C542]"></div>
-                        <div className="w-2 h-0.5 bg-[#F5C542]"></div>
-                      </div>
-                      <h3 className="text-lg font-bold mb-1">{infraData.contactTitle || 'Contact Us'}</h3>
-                      <h4 className="text-xs font-semibold text-white/80 mb-4">{infraData.officeName || 'Head Office'}</h4>
-                      
-                      <div className="space-y-3 text-xs">
-                        {infraData.address && (
-                          <div className="flex gap-2 items-start">
-                            <MapPin className="w-3.5 h-3.5 text-[#F5C542] shrink-0 mt-0.5" /> 
-                            <span className="line-clamp-2 leading-tight">{infraData.address}</span>
-                          </div>
-                        )}
-                        {(infraData.phone1 || infraData.phone2) && (
-                          <div className="flex gap-2 items-start">
-                            <Phone className="w-3.5 h-3.5 text-[#F5C542] shrink-0 mt-0.5" /> 
-                            <div className="flex flex-col">
-                              <span>{infraData.phone1}</span>
-                              <span>{infraData.phone2}</span>
-                            </div>
-                          </div>
-                        )}
-                        {infraData.email && (
-                          <div className="flex gap-2 items-start">
-                            <Mail className="w-3.5 h-3.5 text-[#F5C542] shrink-0 mt-0.5" /> 
-                            <span className="break-all">{infraData.email}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    
-                    {/* Newsletter Side */}
-                    <div className="bg-gray-100 p-5">
-                      <div className="flex gap-1 mb-3">
-                        <div className="w-2 h-0.5 bg-[#F5C542]"></div>
-                        <div className="w-2 h-0.5 bg-[#F5C542]"></div>
-                        <div className="w-2 h-0.5 bg-[#F5C542]"></div>
-                      </div>
-                      <h3 className="text-lg font-bold text-[#022683] mb-1">{infraData.newsletterTitle || 'Newsletter'}</h3>
-                      <p className="text-xs text-gray-700 mb-4">{infraData.newsletterSubtitle || 'Subscribe to our Newsletter'}</p>
-                      
-                      <div className="space-y-2.5">
-                        <div className="h-8 bg-white/70 rounded-lg border border-gray-300"></div>
-                        <div className="h-8 bg-white/70 rounded-lg border border-gray-300"></div>
-                        <div className="h-16 bg-white/70 rounded-lg border border-gray-300"></div>
-                        <div className="h-10 bg-white border border-[#022683] rounded-full mt-2 w-full flex items-center justify-center text-xs text-[#022683] font-bold tracking-wider shadow-sm">
-                          SUBSCRIBE NOW
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-12 text-center space-y-3">

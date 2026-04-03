@@ -209,7 +209,7 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (page: string) 
 
   const handleQuickAction = (action: string) => {
     if (action === 'preview') {
-      window.open('https://homepage-rajuandprasad-copy.vercel.app/', '_blank');
+      window.open('https://www.rajuandprasad.com', '_blank');
     } else if (onNavigate) {
       onNavigate(action);
     }

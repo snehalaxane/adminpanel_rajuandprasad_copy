@@ -313,21 +313,13 @@ export default function SelectClientsManager() {
                     className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg text-white"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#888888] mb-2">Intro Description Paragraph 2</label>
-                  <textarea
-                    value={introData.introDescription2}
-                    onChange={(e) => setIntroData({ ...introData, introDescription2: e.target.value })}
-                    rows={3}
-                    className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg text-white"
-                  />
-                </div>
+
               </div>
             </div>
           </div>
 
           {/* Stats Section */}
-          <div className="bg-[#16181D] rounded-lg shadow-lg p-6 border border-[rgba(136,136,136,0.25)]">
+          {/* <div className="bg-[#16181D] rounded-lg shadow-lg p-6 border border-[rgba(136,136,136,0.25)]">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <PieChart className="w-6 h-6 text-[#888888]" />
@@ -379,7 +371,7 @@ export default function SelectClientsManager() {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* Sectors Section */}
           <div className="bg-[#16181D] rounded-lg shadow-lg p-6 border border-[rgba(136,136,136,0.25)]">

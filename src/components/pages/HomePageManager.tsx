@@ -10,10 +10,6 @@ export default function HomePageManager() {
     title: "",
     subtitle: "",
     description: "",
-    ctas: [
-      { text: "", link: "" },
-      { text: "", link: "" }, // 👈 second CTA
-    ],
     imageUrl: "",
     enabled: false,
     stat1: "",
@@ -55,7 +51,6 @@ export default function HomePageManager() {
       formData.append("title", heroData.title);
       formData.append("subtitle", heroData.subtitle);
       formData.append("description", heroData.description);
-      formData.append("ctas", JSON.stringify(heroData.ctas));
       formData.append("enabled", String(heroData.enabled));
       formData.append("stat1", heroData.stat1);
       formData.append("stat2", heroData.stat2);
@@ -63,11 +58,19 @@ export default function HomePageManager() {
       formData.append("presenceTitle", heroData.presenceTitle);
       formData.append("presenceSubtitle", heroData.presenceSubtitle);
       let saveImageUrl = heroData.imageUrl;
-      if (saveImageUrl && saveImageUrl.startsWith("blob:")) saveImageUrl = "";
+      if (saveImageUrl && saveImageUrl.startsWith("blob:")) {
+        saveImageUrl = "";
+      } else if (saveImageUrl && API_BASE_URL && saveImageUrl.startsWith(API_BASE_URL)) {
+        saveImageUrl = saveImageUrl.replace(API_BASE_URL, "");
+      }
       formData.append("imageUrl", saveImageUrl);
 
       let saveMapImageUrl = heroData.mapImageUrl;
-      if (saveMapImageUrl && saveMapImageUrl.startsWith("blob:")) saveMapImageUrl = "";
+      if (saveMapImageUrl && saveMapImageUrl.startsWith("blob:")) {
+        saveMapImageUrl = "";
+      } else if (saveMapImageUrl && API_BASE_URL && saveMapImageUrl.startsWith(API_BASE_URL)) {
+        saveMapImageUrl = saveMapImageUrl.replace(API_BASE_URL, "");
+      }
       formData.append("mapImageUrl", saveMapImageUrl);
 
       if (heroImageFile) {
@@ -141,7 +144,7 @@ export default function HomePageManager() {
               ? data.stats.map((s: any) => {
                 const imgPath = s.image || s.icon || "";
                 return {
-                  image: imgPath ? (imgPath.startsWith('http') ? imgPath : `${API_BASE_URL}${imgPath}`) : "",
+                  image: imgPath ? (imgPath.startsWith('http') ? imgPath : `${API_BASE_URL}${imgPath.startsWith('/') ? '' : '/'}${imgPath}`) : "",
                   text: s.text ?? ""
                 };
               })
@@ -179,20 +182,14 @@ export default function HomePageManager() {
           title: data.title ?? "",
           subtitle: data.subtitle ?? "",
           description: data.description ?? "",
-          ctas: data.ctas?.length === 2
-            ? data.ctas
-            : [
-              { text: "", link: "" },
-              { text: "", link: "" },
-            ],
-          imageUrl: data.imageUrl ? (data.imageUrl.startsWith('http') ? data.imageUrl : `${API_BASE_URL}${data.imageUrl}`) : "",
+          imageUrl: data.imageUrl ? (data.imageUrl.startsWith('http') ? data.imageUrl : `${API_BASE_URL}${data.imageUrl.startsWith('/') ? '' : '/'}${data.imageUrl}`) : "",
           enabled: data.enabled ?? false,
           stat1: data.stat1 ?? "",
           stat2: data.stat2 ?? "",
           stat3: data.stat3 ?? "",
           presenceTitle: data.presenceTitle ?? "",
           presenceSubtitle: data.presenceSubtitle ?? "",
-          mapImageUrl: data.mapImageUrl ? (data.mapImageUrl.startsWith('http') ? data.mapImageUrl : `${API_BASE_URL}${data.mapImageUrl}`) : "",
+          mapImageUrl: data.mapImageUrl ? (data.mapImageUrl.startsWith('http') ? data.mapImageUrl : `${API_BASE_URL}${data.mapImageUrl.startsWith('/') ? '' : '/'}${data.mapImageUrl}`) : "",
         });
       } catch (err) {
         console.error("Hero load failed");
@@ -416,47 +413,7 @@ export default function HomePageManager() {
               </div> */}
 
 
-              <div className="space-y-6">
-                {heroData.ctas.map((cta, index) => (
-                  <div key={index} className="grid grid-cols-2 gap-4">
 
-                    {/* CTA TEXT */}
-                    <div>
-                      <label className="block text-sm font-medium text-[#888888] mb-2">
-                        CTA {index + 1} Text
-                      </label>
-                      <input
-                        type="text"
-                        value={cta.text}
-                        onChange={(e) => {
-                          const updated = [...heroData.ctas];
-                          updated[index].text = e.target.value;
-                          setHeroData({ ...heroData, ctas: updated });
-                        }}
-                        className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg focus:ring-2 focus:ring-[#022683] focus:border-[#022683] outline-none text-[#E6E6E6]"
-                      />
-                    </div>
-
-                    {/* CTA LINK */}
-                    <div>
-                      <label className="block text-sm font-medium text-[#888888] mb-2">
-                        CTA {index + 1} URL
-                      </label>
-                      <input
-                        type="text"
-                        value={cta.link}
-                        onChange={(e) => {
-                          const updated = [...heroData.ctas];
-                          updated[index].link = e.target.value;
-                          setHeroData({ ...heroData, ctas: updated });
-                        }}
-                        className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg focus:ring-2 focus:ring-[#022683] focus:border-[#022683] outline-none text-[#E6E6E6]"
-                      />
-                    </div>
-
-                  </div>
-                ))}
-              </div>
               <div className="animate-fade-in" style={{ animationDelay: "0.45s" }}>
                 <label className="block text-sm font-medium text-[#888888] mb-2">
                   Hero Image
@@ -608,7 +565,7 @@ export default function HomePageManager() {
             </div>
 
             <div className="space-y-4">
-              <div className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
+              {/* <div className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
                 <label className="block text-sm font-medium text-[#888888] mb-2">
                   Section Title
                 </label>
@@ -618,9 +575,9 @@ export default function HomePageManager() {
                   onChange={(e) => setAboutData({ ...aboutData, title: e.target.value })}
                   className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg focus:ring-2 focus:ring-[#022683] focus:border-[#022683] outline-none text-[#E6E6E6] transition-all duration-300 hover:border-[#888888]"
                 />
-              </div>
+              </div> */}
 
-              <div className="animate-fade-in" style={{ animationDelay: '0.15s' }}>
+              {/* <div className="animate-fade-in" style={{ animationDelay: '0.15s' }}>
                 <label className="block text-sm font-medium text-[#888888] mb-2">
                   Description
                 </label>
@@ -630,7 +587,7 @@ export default function HomePageManager() {
                   rows={3}
                   className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg focus:ring-2 focus:ring-[#022683] focus:border-[#022683] outline-none text-[#E6E6E6] transition-all duration-300 hover:border-[#888888]"
                 />
-              </div>
+              </div> */}
 
               <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
                 <label className="block text-sm font-medium text-[#888888] mb-4">
@@ -756,15 +713,7 @@ export default function HomePageManager() {
                   </div>
                 )}
 
-                <div className="flex gap-4">
-                  <button className="px-3 py-1.5 bg-white text-[#022683] rounded text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                    {heroData.ctas[0]?.text}
-                  </button>
 
-                  <button className="px-3 py-1.5 bg-white text-[#022683] rounded text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg">
-                    {heroData.ctas[1]?.text}
-                  </button>
-                </div>
 
 
               </div>

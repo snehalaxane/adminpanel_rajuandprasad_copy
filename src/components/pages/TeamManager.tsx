@@ -39,8 +39,6 @@ export default function TeamManager() {
   });
   const [toast, setToast] = useState('');
   const [introData, setIntroData] = useState({
-    title: 'The Team',
-    description: 'Meet our experienced & dedicated Chartered Accountant professionals',
     backgroundImage: '',
     accentText: ''
   });
@@ -57,8 +55,6 @@ export default function TeamManager() {
       const res = await axios.get(`${API_BASE_URL}/api/team-intro`);
       if (res.data) {
         setIntroData({
-          title: res.data.title || 'The Team',
-          description: res.data.description || 'Meet our experienced & dedicated Chartered Accountant professionals',
           backgroundImage: res.data.backgroundImage || '',
           accentText: res.data.accentText || ''
         });
@@ -72,8 +68,6 @@ export default function TeamManager() {
     setSavingIntro(true);
     try {
       const dataToSave = {
-        title: introData.title,
-        description: introData.description,
         backgroundImage: introData.backgroundImage,
         accentText: introData.accentText
       };
@@ -359,25 +353,7 @@ export default function TeamManager() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-[#888888] mb-2">Page Title</label>
-            <input
-              type="text"
-              value={introData.title}
-              onChange={(e) => setIntroData({ ...introData, title: e.target.value })}
-              className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg text-[#E6E6E6] focus:ring-2 focus:ring-[#022683] outline-none"
-              placeholder="e.g., The Team"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-[#888888] mb-2">Description</label>
-            <textarea
-              value={introData.description}
-              onChange={(e) => setIntroData({ ...introData, description: e.target.value })}
-              className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg text-[#E6E6E6] focus:ring-2 focus:ring-[#022683] outline-none h-11 resize-none"
-              placeholder="e.g., Meet our experienced & dedicated professionals"
-            />
-          </div>
+
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-[#888888] mb-2">Accent Line Text (Intro Paragraph)</label>
             <textarea
