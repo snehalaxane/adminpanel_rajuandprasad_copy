@@ -12,8 +12,6 @@ export default function HomePageManager() {
     description: "",
     imageUrl: "",
     enabled: false,
-    stat1: "",
-    stat2: "",
     stat3: "",
     presenceTitle: "",
     presenceSubtitle: "",
@@ -52,8 +50,6 @@ export default function HomePageManager() {
       formData.append("subtitle", heroData.subtitle);
       formData.append("description", heroData.description);
       formData.append("enabled", String(heroData.enabled));
-      formData.append("stat1", heroData.stat1);
-      formData.append("stat2", heroData.stat2);
       formData.append("stat3", heroData.stat3);
       formData.append("presenceTitle", heroData.presenceTitle);
       formData.append("presenceSubtitle", heroData.presenceSubtitle);
@@ -184,8 +180,6 @@ export default function HomePageManager() {
           description: data.description ?? "",
           imageUrl: data.imageUrl ? (data.imageUrl.startsWith('http') ? data.imageUrl : `${API_BASE_URL}${data.imageUrl.startsWith('/') ? '' : '/'}${data.imageUrl}`) : "",
           enabled: data.enabled ?? false,
-          stat1: data.stat1 ?? "",
-          stat2: data.stat2 ?? "",
           stat3: data.stat3 ?? "",
           presenceTitle: data.presenceTitle ?? "",
           presenceSubtitle: data.presenceSubtitle ?? "",
@@ -355,29 +349,9 @@ export default function HomePageManager() {
               </div>
 
               {/* Stats Section Fields */}
-              <div className="grid grid-cols-3 gap-4 animate-fade-in" style={{ animationDelay: '0.35s' }}>
+              <div className="grid grid-cols-1 gap-4 animate-fade-in" style={{ animationDelay: '0.35s' }}>
                 <div>
-                  <label className="block text-sm font-medium text-[#888888] mb-2">Stat 1</label>
-                  <input
-                    type="text"
-                    value={heroData.stat1}
-                    onChange={(e) => setHeroData({ ...heroData, stat1: e.target.value })}
-                    className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg focus:ring-2 focus:ring-[#022683] focus:border-[#022683] outline-none text-[#E6E6E6]"
-                    placeholder="e.g. 7 Office Locations"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#888888] mb-2">Stat 2</label>
-                  <input
-                    type="text"
-                    value={heroData.stat2}
-                    onChange={(e) => setHeroData({ ...heroData, stat2: e.target.value })}
-                    className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg focus:ring-2 focus:ring-[#022683] focus:border-[#022683] outline-none text-[#E6E6E6]"
-                    placeholder="e.g. 200+ Qualified CAs"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#888888] mb-2">Stat 3</label>
+                  <label className="block text-sm font-medium text-[#888888] mb-2">Statistic</label>
                   <input
                     type="text"
                     value={heroData.stat3}
@@ -693,9 +667,7 @@ export default function HomePageManager() {
                 <p className="text-xs text-white/70 mb-3">{heroData.description}</p>
 
                 {/* Stats Preview */}
-                <div className="grid grid-cols-3 gap-2 mb-3 text-[10px] text-center bg-black/20 p-2 rounded">
-                  <div>{heroData.stat1}</div>
-                  <div>{heroData.stat2}</div>
+                <div className="grid grid-cols-1 gap-2 mb-3 text-[10px] text-center bg-black/20 p-2 rounded">
                   <div>{heroData.stat3}</div>
                 </div>
 
