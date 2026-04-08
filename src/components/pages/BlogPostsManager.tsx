@@ -218,7 +218,7 @@ export default function BlogPostsManager() {
       img.src = URL.createObjectURL(file);
       img.onload = () => {
         if (img.width !== 450 || img.height !== 256) {
-          setToast(`Notice: Image is ${img.width}x${img.height}. Recommended is 450x256 for best fit.`);
+          setToast(`Notice: Image is ${img.width}x${img.height}. Recommended is 1000x400 for best fit.`);
           setTimeout(() => setToast(''), 4000);
         }
         setUploadingFile(file);
@@ -400,9 +400,9 @@ export default function BlogPostsManager() {
             <div className="relative h-48 bg-gradient-to-br from-[#0F1115] to-[#16181D] overflow-hidden group">
               {post.featuredImage ? (
                 <img
-                  src={post.featuredImage.startsWith('http') ? post.featuredImage : `API_BASE_URL/${post.featuredImage}`}
+                  src={resolveImageUrl(post.featuredImage)}
                   alt={post.title}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
@@ -469,12 +469,12 @@ export default function BlogPostsManager() {
                   <Edit className="w-3.5 h-3.5" />
                   <span className="text-sm">Edit</span>
                 </button>
-                <button
+                {/* <button
                   className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-[#888888]/20 to-[#022683]/20 text-[#888888] rounded hover:from-[#888888]/30 hover:to-[#022683]/30 hover:text-[#E6E6E6] transition-all duration-300 hover:scale-105"
                 >
                   <Eye className="w-3.5 h-3.5" />
                   <span className="text-sm">Preview</span>
-                </button>
+                </button> */}
                 <button
                   onClick={() => handleDelete(post._id!)}
                   className="p-2 text-red-400 hover:bg-[rgba(255,0,0,0.1)] rounded transition-all duration-300 hover:scale-110"
@@ -689,12 +689,21 @@ export default function BlogPostsManager() {
                       {uploadingFile ? 'Change Image' : 'Click to upload image'}
                     </label>
                     {uploadingFile && (
-                      <p className="mt-2 text-sm text-green-400 flex items-center justify-center gap-2">
-                        <ImageIcon className="w-4 h-4" />
-                        {uploadingFile.name}
-                      </p>
+                      <div className="mt-4 space-y-2">
+                        <div className="relative mx-auto w-32 h-20 rounded-lg overflow-hidden border border-[rgba(136,136,136,0.3)] bg-[#0A0C10]">
+                          <img
+                            src={URL.createObjectURL(uploadingFile)}
+                            alt="Upload preview"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <p className="text-xs text-green-400 flex items-center justify-center gap-1">
+                          <ImageIcon className="w-3 h-3" />
+                          {uploadingFile.name}
+                        </p>
+                      </div>
                     )}
-                    <p className="text-xs text-[#888888] mt-2">Images only, max 5MB | Recommended size: 450x256</p>
+                    <p className="text-xs text-[#888888] mt-2">Images only, max 5MB | Recommended size: 1000x400</p>
                   </div>
 
                   {/* URL Input */}
@@ -714,7 +723,7 @@ export default function BlogPostsManager() {
                   {(formData.featuredImage && !uploadingFile) && (
                     <div className="border border-[rgba(136,136,136,0.25)] rounded-lg bg-[#16181D] flex items-center justify-center h-48 w-full overflow-hidden">
                       <img
-                        src={formData.featuredImage.startsWith('http') ? formData.featuredImage : `API_BASE_URL/${formData.featuredImage}`}
+                        src={resolveImageUrl(formData.featuredImage)}
                         alt="Preview"
                         className="object-contain max-h-48 max-w-full mx-auto"
                       />
