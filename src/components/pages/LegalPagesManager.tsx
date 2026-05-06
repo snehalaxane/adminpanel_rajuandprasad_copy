@@ -28,9 +28,9 @@ export default function LegalPagesManager() {
   const [toast, setToast] = useState('');
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-const [deleting, setDeleting] = useState(false);
-const CKEditorComponent = CKEditor as any;
-const [content, setContent] = useState("<p>Start writing...</p>");
+  const [deleting, setDeleting] = useState(false);
+  const CKEditorComponent = CKEditor as any;
+  const [content, setContent] = useState("<p>Start writing...</p>");
 
 
 
@@ -93,7 +93,7 @@ const [content, setContent] = useState("<p>Start writing...</p>");
     const newPageData: Partial<LegalPage> = {
       pageTitle: 'New Legal Page',
       pageSlug: `/new-legal-page-${Date.now()}`,
-     content: '<h2>New Legal Page</h2><p>Start writing your content here...</p>',
+      content: '<h2>New Legal Page</h2><p>Start writing your content here...</p>',
 
       // metaTitle: 'New Legal Page',
       // metaDescription: 'Description for new legal page',
@@ -114,31 +114,31 @@ const [content, setContent] = useState("<p>Start writing...</p>");
   };
 
   const handleDeletePage = (id: string) => {
-  setDeleteId(id);
-};
-const confirmDelete = async () => {
-  if (!deleteId) return;
+    setDeleteId(id);
+  };
+  const confirmDelete = async () => {
+    if (!deleteId) return;
 
-  try {
-    setDeleting(true);
-    await axios.delete(`${API_BASE_URL}/api/legal/${deleteId}`);
+    try {
+      setDeleting(true);
+      await axios.delete(`${API_BASE_URL}/api/legal/${deleteId}`);
 
-    const updatedList = legalPages.filter(p => p._id !== deleteId);
-    setLegalPages(updatedList);
+      const updatedList = legalPages.filter(p => p._id !== deleteId);
+      setLegalPages(updatedList);
 
-    if (selectedPageId === deleteId) {
-      setSelectedPageId(updatedList.length > 0 ? updatedList[0]._id! : null);
+      if (selectedPageId === deleteId) {
+        setSelectedPageId(updatedList.length > 0 ? updatedList[0]._id! : null);
+      }
+
+      setToast('Page deleted!');
+    } catch (err) {
+      setToast('Error deleting page');
+    } finally {
+      setDeleting(false);
+      setDeleteId(null);
+      setTimeout(() => setToast(''), 3000);
     }
-
-    setToast('Page deleted!');
-  } catch (err) {
-    setToast('Error deleting page');
-  } finally {
-    setDeleting(false);
-    setDeleteId(null);
-    setTimeout(() => setToast(''), 3000);
-  }
-};
+  };
 
 
   const updateSelectedPage = (updates: Partial<LegalPage>) => {
@@ -301,17 +301,17 @@ const confirmDelete = async () => {
               {/* Content Area */}
               <div className="p-6">
                 {showPreview ? (
-  <div className="max-w-4xl mx-auto">
-    <h1 className="text-3xl font-bold text-[#E6E6E6] mb-6">
-      {selectedPage.pageTitle}
-    </h1>
+                  <div className="max-w-4xl mx-auto">
+                    <h1 className="text-3xl font-bold text-[#E6E6E6] mb-6">
+                      {selectedPage.pageTitle}
+                    </h1>
 
-    <div
-      className="prose prose-lg max-w-none text-[#E6E6E6]"
-      dangerouslySetInnerHTML={{ __html: selectedPage.content }}
-    />
-  </div>
-) : (
+                    <div
+                      className="prose prose-lg max-w-none text-[#E6E6E6]"
+                      dangerouslySetInnerHTML={{ __html: selectedPage.content }}
+                    />
+                  </div>
+                ) : (
 
                   // Edit Mode
                   <div className="space-y-4">
@@ -322,18 +322,18 @@ const confirmDelete = async () => {
                       <input
                         type="text"
                         value={selectedPage.pageTitle}
-                       onChange={(e) => {
-  const title = e.target.value;
-  const slug = '/' + title
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-');
+                        onChange={(e) => {
+                          const title = e.target.value;
+                          const slug = '/' + title
+                            .toLowerCase()
+                            .replace(/[^a-z0-9\s-]/g, '')
+                            .replace(/\s+/g, '-');
 
-  updateSelectedPage({
-    pageTitle: title,
-    pageSlug: slug
-  });
-}}
+                          updateSelectedPage({
+                            pageTitle: title,
+                            pageSlug: slug
+                          });
+                        }}
 
                         className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg focus:ring-2 focus:ring-[#022683] focus:border-[#022683] outline-none text-[#E6E6E6] transition-all"
                       />
@@ -352,38 +352,38 @@ const confirmDelete = async () => {
                       />
                     </div>
 
-                <div>
-  <label className="block text-sm font-medium text-[#888888] mb-2">
-    Content Editor
-  </label>
+                    <div>
+                      <label className="block text-sm font-medium text-[#888888] mb-2">
+                        Content Editor
+                      </label>
 
-  <div className="border border-[rgba(136,136,136,0.25)] rounded-lg overflow-hidden bg-[#0F1115]">
-    {/* 1. The Toolbar Container (The "Horizontal Bar") */}
-    <div id="toolbar-container" className="border-b border-[rgba(136,136,136,0.25)] bg-[#16181D]"></div>
+                      <div className="border border-[rgba(136,136,136,0.25)] rounded-lg overflow-hidden bg-[#0F1115]">
+                        {/* 1. The Toolbar Container (The "Horizontal Bar") */}
+                        <div id="toolbar-container" className="border-b border-[rgba(136,136,136,0.25)] bg-[#16181D]"></div>
 
-    {/* 2. The Editable Area */}
-    <div className="min-h-[400px] p-4 text-[#E6E6E6]">
-      <CKEditorComponent
-        editor={DecoupledEditor}
-        data={selectedPage.content}
-        onReady={(editor: any) => {
-          // This line "injects" the toolbar into our specific div
-          const toolbarContainer = document.querySelector('#toolbar-container');
-          if (toolbarContainer) {
-            toolbarContainer.appendChild(editor.ui.view.toolbar.element);
-          }
-        }}
-        onChange={(_event: any, editor: any) => {
-          const data = editor.getData();
-          updateSelectedPage({ content: data });
-        }}
-        config={{
-            placeholder: 'Start writing your legal content...',
-        }}
-      />
-    </div>
-  </div>
-</div>
+                        {/* 2. The Editable Area */}
+                        <div className="min-h-[400px] p-4 text-[#E6E6E6]">
+                          <CKEditorComponent
+                            editor={DecoupledEditor}
+                            data={selectedPage.content}
+                            onReady={(editor: any) => {
+                              // This line "injects" the toolbar into our specific div
+                              const toolbarContainer = document.querySelector('#toolbar-container');
+                              if (toolbarContainer) {
+                                toolbarContainer.appendChild(editor.ui.view.toolbar.element);
+                              }
+                            }}
+                            onChange={(_event: any, editor: any) => {
+                              const data = editor.getData();
+                              updateSelectedPage({ content: data });
+                            }}
+                            config={{
+                              placeholder: 'Start writing your legal content...',
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -399,11 +399,11 @@ const confirmDelete = async () => {
         {/* Right Panel - SEO Settings */}
         {showSEOPanel && selectedPage && (
           <div className="col-span-3 bg-[#16181D] rounded-lg shadow-lg p-6 border border-[rgba(136,136,136,0.25)] hover-card-lift">
-           
-            <div className="space-y-4">
-             
 
-           
+            <div className="space-y-4">
+
+
+
               {/* <div className="mb-6 p-4 bg-gradient-to-r from-[#888888] to-[#022683] rounded-lg text-white shadow-lg animate-fade-in transition-all duration-300 hover:scale-105">
                 <h4 className="text-sm font-bold text-[#E6E6E6] mb-3">Google Preview</h4>
                 <div className="p-3 bg-[#0F1115] rounded-lg border border-[rgba(136,136,136,0.15)] shadow-inner">
@@ -445,9 +445,9 @@ const confirmDelete = async () => {
         </div>
       )}
       {deleteId && (
-  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
 
-  <div className="bg-gradient-to-br from-[#16181D] to-[#1a1d24]
+          <div className="bg-gradient-to-br from-[#16181D] to-[#1a1d24]
     border border-red-500/30
     shadow-2xl
     rounded-xl
@@ -456,36 +456,36 @@ const confirmDelete = async () => {
     max-w-md
     animate-scale-in">
 
-    <h3 className="text-lg font-semibold text-white mb-3">
-      Delete this legal page?
-    </h3>
+            <h3 className="text-lg font-semibold text-white mb-3">
+              Delete this legal page?
+            </h3>
 
-    <p className="text-sm text-[#888888] mb-6">
-      This action cannot be undone.
-    </p>
+            <p className="text-sm text-[#888888] mb-6">
+              This action cannot be undone.
+            </p>
 
-    <div className="flex justify-end gap-3">
-      <button
-        onClick={() => setDeleteId(null)}
-        disabled={deleting}
-        className="px-4 py-2 rounded-lg bg-[rgba(136,136,136,0.2)] text-white hover:bg-[rgba(136,136,136,0.3)] transition-all"
-      >
-        Cancel
-      </button>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setDeleteId(null)}
+                disabled={deleting}
+                className="px-4 py-2 rounded-lg bg-[rgba(136,136,136,0.2)] text-white hover:bg-[rgba(136,136,136,0.3)] transition-all"
+              >
+                Cancel
+              </button>
 
-      <button
-        onClick={confirmDelete}
-        disabled={deleting}
-        className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-all disabled:opacity-50"
-      >
-        {deleting ? "Deleting..." : "Delete"}
-      </button>
-    </div>
+              <button
+                onClick={confirmDelete}
+                disabled={deleting}
+                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-all disabled:opacity-50"
+              >
+                {deleting ? "Deleting..." : "Delete"}
+              </button>
+            </div>
 
-  </div>
-</div>
+          </div>
+        </div>
 
-)}
+      )}
 
     </div>
   );

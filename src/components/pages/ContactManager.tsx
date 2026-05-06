@@ -722,7 +722,7 @@ export default function ContactManager() {
                     )}
                   </div>
 
-                  {/* <div className="space-y-2">
+                  <div className="space-y-2">
                     {formFields.filter(f => f.enabled).map((field) => (
                       <div key={field.id}>
                         <label className="text-xs text-white font-medium block mb-1">
@@ -748,12 +748,12 @@ export default function ContactManager() {
                     <button className="w-full px-3 py-2 bg-white text-[#022683] rounded text-xs mt-3 font-bold shadow-md hover:bg-gray-100 transition-colors opacity-90 cursor-not-allowed">
                       Send Message
                     </button>
-                  </div> */}
+                  </div>
                 </div>
               )}
 
               <div className="space-y-3">
-                {/* <div className="p-3 bg-[#0F1115] rounded-lg border border-[rgba(136,136,136,0.15)]">
+                <div className="p-3 bg-[#0F1115] rounded-lg border border-[rgba(136,136,136,0.15)]">
                   <p className="text-xs text-[#E6E6E6] mb-2"><strong>Contact Details:</strong></p>
                   <div className="space-y-1">
                     <p className="text-xs text-[#888888] flex items-center gap-2">
@@ -763,9 +763,9 @@ export default function ContactManager() {
                       <Mail className="w-3 h-3 text-[#022683]" /> {formSettings.emailUs}
                     </p>
                   </div>
-                </div> */}
+                </div>
 
-                {/* {offices.filter(o => o.enabled).length > 0 && (
+                {offices.filter(o => o.enabled).length > 0 && (
                   <div className="p-3 bg-[#0F1115] rounded-lg border border-[rgba(136,136,136,0.15)]">
                     <p className="text-xs text-[#E6E6E6] mb-2 font-bold flex items-center gap-2">
                       <MapPin className="w-3 h-3 text-[#022683]" /> Our Locations:
@@ -780,7 +780,7 @@ export default function ContactManager() {
                       ))}
                     </div>
                   </div>
-                )} */}
+                )}
               </div>
             </div>
           </div>
@@ -886,9 +886,9 @@ export default function ContactManager() {
             </div>
 
             <div className="mt-6 p-4 bg-yellow-900/20 border border-yellow-800/30 rounded-lg">
-              {/* <p className="text-sm text-yellow-500">
+              <p className="text-sm text-yellow-500">
                 <strong>⚠️ Note:</strong> Drag fields to reorder them in the form. Mark important fields as "Required" to ensure users provide necessary information.
-              </p> */}
+              </p>
             </div>
 
             <div className="flex justify-end mt-4">

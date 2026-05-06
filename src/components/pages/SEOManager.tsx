@@ -10,8 +10,7 @@ interface PageSEO {
   urlSlug: string;
   metaTitle: string;
   metaDescription: string;
- keywords: string[]
-  // ogImage: string;
+  keywords: string[];
   indexPage: boolean;
   followLinks: boolean;
   includeInSitemap: boolean;
@@ -111,7 +110,7 @@ const confirmAddPage = async () => {
     urlSlug: `/${pageName.toLowerCase().replace(/\s+/g, '-')}`,
     metaTitle: `${pageName} - Raju & Prasad`,
     metaDescription: '',
-     keywords: [],
+    keywords: [],
     indexPage: true,
     followLinks: true,
     includeInSitemap: true
@@ -310,8 +309,10 @@ const confirmAddPage = async () => {
                   maxLength={160}
                   rows={3}
                   className="w-full px-4 py-2 border border-[rgba(136,136,136,0.25)] rounded-lg focus:ring-2 focus:ring-[#022683] focus:border-transparent outline-none bg-[#0F1115] text-[#E6E6E6] transition-all"
+                  placeholder="Recommended: 150-160 characters"
                 />
               </div>
+
 
              <div>
   <label className="block text-sm font-medium text-[#888888] mb-2">
@@ -345,6 +346,7 @@ const confirmAddPage = async () => {
     placeholder="Type keyword and press comma"
     className="w-full px-4 py-2 border border-[rgba(136,136,136,0.25)] rounded-lg focus:ring-2 focus:ring-[#022683] focus:border-transparent outline-none bg-[#0F1115] text-[#E6E6E6]"
   />
+  <p className="text-[10px] text-[#555] mt-1">Keywords help bots categorize your content. Use commas to separate.</p>
 </div>
 
 
@@ -373,26 +375,6 @@ const confirmAddPage = async () => {
               </div>
             </div>
 
-            {/* Social Media Preview */}
-            <div className="mb-4">
-              <h4 className="text-sm font-bold text-[#E6E6E6] mb-3">Social Media Preview</h4>
-              <div className="border border-[rgba(136,136,136,0.25)] rounded-lg overflow-hidden shadow-lg transition-all duration-300 hover:scale-105">
-                {/* <div className="bg-gray-200 h-32 flex items-center justify-center">
-                  <span className="text-xs text-gray-500">OG Image Preview</span>
-                </div> */}
-                <div className="p-4 bg-gradient-to-r from-[#888888] to-[#022683]">
-                  <div className="text-sm font-bold text-white mb-2">
-                    {currentPage.metaTitle || 'Page Title'}
-                  </div>
-                  <div className="text-xs text-white/80">
-                    {(currentPage.metaDescription || '').substring(0, 100)}...
-                  </div>
-                  <div className="mt-3 text-[10px] text-white/60 uppercase tracking-wider font-semibold">
-                    WEBSITE.COM
-                  </div>
-                </div>
-              </div>
-            </div>
 
             {/* SEO Score */}
             <div className="p-4 bg-[rgba(22,163,74,0.1)] rounded-lg border border-green-900/30">
@@ -433,8 +415,8 @@ const confirmAddPage = async () => {
         </div>
       )}
       {showAddModal && (
-  <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
-    <div className="bg-[#16181D] border border-[#022683]/30 shadow-2xl rounded-lg p-6 w-96 pointer-events-auto">
+  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in">
+    <div className="bg-gradient-to-br from-[#16181D] to-[#1a1d24] border border-[#022683]/30 shadow-2xl rounded-xl p-8 w-full max-w-md animate-scale-in">
 
       <h3 className="text-base font-semibold text-white mb-4">
         Add New SEO Page
@@ -444,9 +426,12 @@ const confirmAddPage = async () => {
         type="text"
         value={newPageName}
         onChange={(e) => setNewPageName(e.target.value)}
-        placeholder="Enter page name (e.g., Portfolio)"
-        className="w-full px-4 py-2 mb-5 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg focus:ring-2 focus:ring-[#022683] outline-none text-[#E6E6E6]"
+        placeholder="Enter page name (e.g., gallery)"
+        className="w-full px-4 py-2 bg-[#0F1115] border border-[rgba(136,136,136,0.25)] rounded-lg focus:ring-2 focus:ring-[#022683] outline-none text-[#E6E6E6]"
       />
+      <p className="text-[10px] text-[#888888] mt-2 mb-5 leading-relaxed">
+        <strong className="text-blue-400">Tip:</strong> Use the name after the # in your URL. For website.com/#<strong>gallery</strong>, use "gallery".
+      </p>
 
       <div className="flex justify-end gap-3">
         <button
