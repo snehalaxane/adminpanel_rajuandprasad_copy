@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, Save, Edit, Image as ImageIcon } from 'lucide-react';
+import { Eye, Save, Edit, Image as ImageIcon, Plus, Trash2, X, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -39,6 +39,18 @@ export default function HomePageManager() {
   const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
   const [heroMapImageFile, setHeroMapImageFile] = useState<File | null>(null);
   const [aboutImageFiles, setAboutImageFiles] = useState<(File | null)[]>([null, null, null, null]);
+
+  // ─── Homepage Services ────────────────────────────────────────────────────────
+  interface HomepageSvc { _id?: string; name: string; image: string; description: string; enabled: boolean; order: number; }
+  const emptyHpSvc = (): HomepageSvc => ({ name: '', image: '', description: '', enabled: true, order: 0 });
+  const [hpServices, setHpServices] = useState<HomepageSvc[]>([]);
+  const [hpSvcForm, setHpSvcForm] = useState<HomepageSvc>(emptyHpSvc());
+  const [hpSvcImageFile, setHpSvcImageFile] = useState<File | null>(null);
+  const [hpSvcEditing, setHpSvcEditing] = useState<string | null>(null); // null = adding new
+  const [hpSvcShowForm, setHpSvcShowForm] = useState(false);
+  const [hpSvcLoading, setHpSvcLoading] = useState(false);
+  const [hpSvcDeleteId, setHpSvcDeleteId] = useState<string | null>(null);
+  const [hpSvcDeleting, setHpSvcDeleting] = useState(false);
 
   const saveHero = async () => {
     try {
@@ -156,7 +168,90 @@ export default function HomePageManager() {
       });
   }, []);
 
+  // ─── Homepage Services CRUD ────────────────────────────────────────────────
+  const fetchHpServices = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/homepage-services`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
+      if (res.ok) setHpServices(await res.json());
+    } catch { /* ignore */ }
+  };
 
+  const saveHpService = async () => {
+    setHpSvcLoading(true);
+    try {
+      const fd = new FormData();
+      fd.append('name', hpSvcForm.name);
+      fd.append('description', hpSvcForm.description);
+      fd.append('enabled', String(hpSvcForm.enabled));
+      fd.append('order', String(hpSvcForm.order));
+      if (hpSvcImageFile) {
+        fd.append('image', hpSvcImageFile);
+      } else if (hpSvcForm.image && !hpSvcForm.image.startsWith('blob:')) {
+        let imgPath = hpSvcForm.image;
+        if (API_BASE_URL && imgPath.startsWith(API_BASE_URL)) imgPath = imgPath.slice(API_BASE_URL.length).replace(/^\//, '');
+        fd.append('image', imgPath);
+      }
+      const url = hpSvcEditing
+        ? `${API_BASE_URL}/api/homepage-services/${hpSvcEditing}`
+        : `${API_BASE_URL}/api/homepage-services`;
+      const method = hpSvcEditing ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method,
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        body: fd,
+      });
+      if (!res.ok) throw new Error();
+      setToast(hpSvcEditing ? 'Service updated!' : 'Service added!');
+      setHpSvcForm(emptyHpSvc());
+      setHpSvcImageFile(null);
+      setHpSvcEditing(null);
+      setHpSvcShowForm(false);
+      await fetchHpServices();
+    } catch {
+      setToast('Failed to save service');
+    } finally {
+      setHpSvcLoading(false);
+      setTimeout(() => setToast(''), 3000);
+    }
+  };
+
+  const deleteHpService = (id: string) => {
+    setHpSvcDeleteId(id);
+  };
+
+  const confirmDeleteHpService = async () => {
+    if (!hpSvcDeleteId) return;
+    setHpSvcDeleting(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/homepage-services/${hpSvcDeleteId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
+      if (!res.ok) throw new Error();
+      setToast('Service deleted');
+      await fetchHpServices();
+    } catch {
+      setToast('Failed to delete');
+    } finally {
+      setHpSvcDeleting(false);
+      setHpSvcDeleteId(null);
+      setTimeout(() => setToast(''), 3000);
+    }
+  };
+
+  const startEditHpService = (svc: any) => {
+    setHpSvcEditing(svc._id);
+    setHpSvcForm({
+      ...svc,
+      image: svc.image
+        ? svc.image.startsWith('http') ? svc.image : `${API_BASE_URL}/${svc.image}`
+        : '',
+    });
+    setHpSvcImageFile(null);
+    setHpSvcShowForm(true);
+  };
 
   useEffect(() => {
     const fetchHero = async () => {
@@ -192,6 +287,8 @@ export default function HomePageManager() {
 
     fetchHero();
   }, []);
+
+  useEffect(() => { fetchHpServices(); }, []);
 
 
   const handleSave = async () => {
@@ -635,6 +732,183 @@ export default function HomePageManager() {
               </button>
             </div>
           </div>}
+
+          {/* ─── Homepage Services Section ─────────────────────────────────── */}
+          <div className="bg-gradient-to-br from-[#16181D] to-[#1a1d24] rounded-lg shadow-lg p-6 border border-[rgba(136,136,136,0.25)] hover-card-lift animate-fade-in transition-all duration-300">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <span className="w-1 h-6 bg-gradient-to-b from-[#888888] to-[#022683] rounded-full animate-pulse-slow"></span>
+                Homepage Services Section
+              </h2>
+              <button
+                onClick={() => { setHpSvcShowForm(!hpSvcShowForm); setHpSvcEditing(null); setHpSvcForm(emptyHpSvc()); setHpSvcImageFile(null); }}
+                className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-[#022683] to-[#033aa0] text-white text-sm rounded-lg hover:from-[#033aa0] hover:to-[#022683] transition-all duration-300"
+              >
+                <Plus className="w-4 h-4" />
+                Add Service
+              </button>
+            </div>
+
+            {/* Add/Edit Form */}
+            {hpSvcShowForm && (
+              <div className="mb-6 p-5 bg-[#0F1115] rounded-xl border border-[rgba(136,136,136,0.25)] space-y-4">
+                <h3 className="text-white font-semibold text-sm">{hpSvcEditing ? 'Edit Service' : 'New Service'}</h3>
+
+                {/* Name */}
+                <div>
+                  <label className="block text-sm font-medium text-[#888888] mb-1">Service Name *</label>
+                  <input
+                    type="text"
+                    value={hpSvcForm.name}
+                    onChange={e => setHpSvcForm({ ...hpSvcForm, name: e.target.value })}
+                    placeholder="e.g. Tax Audit"
+                    className="w-full px-4 py-2 bg-[#16181D] border border-[rgba(136,136,136,0.25)] rounded-lg focus:ring-2 focus:ring-[#022683] focus:border-[#022683] outline-none text-[#E6E6E6] transition-all duration-300 hover:border-[#888888]"
+                  />
+                </div>
+
+                {/* Description */}
+                <div>
+                  <label className="block text-sm font-medium text-[#888888] mb-1">Description</label>
+                  <textarea
+                    rows={3}
+                    value={hpSvcForm.description}
+                    onChange={e => setHpSvcForm({ ...hpSvcForm, description: e.target.value })}
+                    placeholder="Brief description of this service..."
+                    className="w-full px-4 py-2 bg-[#16181D] border border-[rgba(136,136,136,0.25)] rounded-lg focus:ring-2 focus:ring-[#022683] focus:border-[#022683] outline-none text-[#E6E6E6] transition-all duration-300 hover:border-[#888888] resize-none"
+                  />
+                </div>
+
+                {/* Image */}
+                <div>
+                  <label className="block text-sm font-medium text-[#888888] mb-1">Service Image</label>
+                  <div className="flex items-center gap-3">
+                    <label className="flex items-center gap-2 px-4 py-2 border border-[rgba(136,136,136,0.25)] bg-[#16181D] rounded-lg cursor-pointer hover:border-[#888888] text-[#E6E6E6] transition-all duration-300 text-sm">
+                      <ImageIcon className="w-4 h-4" />
+                      Upload
+                      <input type="file" accept="image/*" hidden onChange={e => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        setHpSvcImageFile(file);
+                        setHpSvcForm(prev => ({ ...prev, image: URL.createObjectURL(file) }));
+                      }} />
+                    </label>
+                    <input
+                      type="text"
+                      value={hpSvcForm.image && !hpSvcForm.image.startsWith('blob:') ? hpSvcForm.image : ''}
+                      onChange={e => { setHpSvcImageFile(null); setHpSvcForm({ ...hpSvcForm, image: e.target.value }); }}
+                      placeholder="Or paste image URL..."
+                      className="flex-1 px-4 py-2 bg-[#16181D] border border-[rgba(136,136,136,0.25)] rounded-lg focus:ring-2 focus:ring-[#022683] outline-none text-[#E6E6E6] text-sm transition-all duration-300 hover:border-[#888888]"
+                    />
+                  </div>
+                  {hpSvcForm.image && (
+                    <div className="mt-3 flex items-center gap-3">
+                      <img src={hpSvcForm.image} alt="preview" className="w-24 h-16 object-cover rounded-lg border border-[rgba(136,136,136,0.25)]" />
+                      <span className="text-xs text-green-400">Image {hpSvcForm.image.startsWith('blob:') ? 'selected' : 'linked'} ✓</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Order + Enabled */}
+                <div className="flex items-center gap-4">
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-[#888888] mb-1">Order</label>
+                    <input
+                      type="number"
+                      value={hpSvcForm.order}
+                      onChange={e => setHpSvcForm({ ...hpSvcForm, order: parseInt(e.target.value) || 0 })}
+                      className="w-full px-4 py-2 bg-[#16181D] border border-[rgba(136,136,136,0.25)] rounded-lg focus:ring-2 focus:ring-[#022683] outline-none text-[#E6E6E6] text-sm"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 mt-5">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="checkbox" checked={hpSvcForm.enabled} onChange={e => setHpSvcForm({ ...hpSvcForm, enabled: e.target.checked })} className="sr-only" />
+                      <div className={`w-10 h-5 rounded-full transition-all duration-300 ${hpSvcForm.enabled ? 'bg-green-500' : 'bg-[rgba(136,136,136,0.3)]'}`}>
+                        <div className={`w-4 h-4 bg-white rounded-full m-0.5 transition-all duration-300 ${hpSvcForm.enabled ? 'translate-x-5' : ''}`}></div>
+                      </div>
+                      <span className="text-sm text-[#888888]">{hpSvcForm.enabled ? 'Enabled' : 'Disabled'}</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex items-center gap-3 pt-2">
+                  <button
+                    onClick={saveHpService}
+                    disabled={hpSvcLoading || !hpSvcForm.name.trim()}
+                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#022683] to-[#033aa0] text-white rounded-lg hover:from-[#033aa0] hover:to-[#022683] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                  >
+                    <Save className="w-5 h-5" />
+                    {hpSvcLoading ? 'Saving...' : hpSvcEditing ? 'Update Service' : 'Add Service'}
+                  </button>
+                  <button
+                    onClick={() => { setHpSvcShowForm(false); setHpSvcEditing(null); setHpSvcForm(emptyHpSvc()); setHpSvcImageFile(null); }}
+                    className="flex items-center gap-2 px-4 py-2 bg-[rgba(136,136,136,0.15)] text-[#888888] rounded-lg hover:bg-[rgba(136,136,136,0.25)] transition-all duration-300 text-sm"
+                  >
+                    <X className="w-4 h-4" />
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Services List */}
+            {hpServices.length === 0 ? (
+              <div className="text-center py-10 text-[#888888] text-sm">
+                <ImageIcon className="w-10 h-10 mx-auto mb-3 opacity-30" />
+                No homepage services added yet. Click "Add Service" to get started.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {hpServices.map((svc, idx) => (
+                  <div key={svc._id} className="flex items-center gap-4 p-4 bg-[#0F1115] rounded-xl border border-[rgba(136,136,136,0.25)] hover:border-[#888888] transition-all duration-300 group">
+                    {/* Image */}
+                    <div className="w-14 h-14 rounded-lg overflow-hidden bg-[#16181D] flex-shrink-0 flex items-center justify-center border border-[rgba(136,136,136,0.15)]">
+                      {svc.image ? (
+                        <img
+                          src={svc.image.startsWith('http') ? svc.image : `${API_BASE_URL}/${svc.image}`}
+                          alt={svc.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <ImageIcon className="w-6 h-6 text-[#888888]" />
+                      )}
+                    </div>
+
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="text-[#E6E6E6] font-semibold text-sm truncate">{svc.name}</p>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full ${svc.enabled ? 'bg-green-900/40 text-green-400' : 'bg-red-900/40 text-red-400'}`}>
+                          {svc.enabled ? 'Enabled' : 'Disabled'}
+                        </span>
+                      </div>
+                      {svc.description && (
+                        <p className="text-[#888888] text-xs mt-1 line-clamp-1">{svc.description}</p>
+                      )}
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => startEditHpService(svc)}
+                        className="p-2 text-[#888888] hover:text-[#E6E6E6] hover:bg-[#16181D] rounded-lg transition-all duration-200"
+                        title="Edit"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => deleteHpService(svc._id!)}
+                        className="p-2 text-[#888888] hover:text-red-400 hover:bg-red-900/20 rounded-lg transition-all duration-200"
+                        title="Delete"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Live Preview Panel */}
@@ -715,6 +989,45 @@ export default function HomePageManager() {
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {hpSvcDeleteId && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in p-2">
+          <div className="bg-[#16181D] border border-red-500/20 shadow-2xl rounded-2xl p-4 w-full max-w-md animate-scale-in">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-6 h-6 bg-red-500/10 rounded-xl flex items-center justify-center">
+                <Trash2 className="w-6 h-6 text-red-500" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Delete Service?</h3>
+                <p className="text-sm text-[#888888]">This action cannot be undone.</p>
+              </div>
+            </div>
+
+            <p className="text-[#E6E6E6] mb-8 leading-relaxed">
+              Are you sure you want to remove this service from the homepage? This will permanently delete the entry.
+            </p>
+
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => setHpSvcDeleteId(null)}
+                disabled={hpSvcDeleting}
+                className="px-6 py-2.5 rounded-xl text-[#888888] hover:text-white transition-all font-semibold"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteHpService}
+                disabled={hpSvcDeleting}
+                className="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-all shadow-lg shadow-red-600/20 font-bold flex items-center gap-2"
+              >
+                {hpSvcDeleting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trash2 className="w-5 h-5" />}
+                {hpSvcDeleting ? 'Deleting...' : 'Delete Service'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Toast Notification */}
       {toast && (

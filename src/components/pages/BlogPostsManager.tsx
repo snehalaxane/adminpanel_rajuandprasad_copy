@@ -438,14 +438,14 @@ export default function BlogPostsManager() {
                 {post.shortDescription}
               </p>
 
-              <div className="mb-4">
+              <div className="mb-1">
                 <span className="inline-block px-3 py-1 bg-gradient-to-r from-[#022683]/20 to-[#033aa0]/20 text-[#888888] text-xs rounded border border-[#022683]/30">
                   {post.category}
                 </span>
               </div>
 
               {/* Tags */}
-              <div className="flex flex-wrap gap-1.5 mb-4 min-h-[2rem]">
+              <div className="flex flex-wrap gap-1.5 mb-1 min-h-[2rem]">
                 {post.tags.slice(0, 3).map(tag => (
                   <span
                     key={tag}
